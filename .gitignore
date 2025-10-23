@@ -1,0 +1,41 @@
+# --- Node.js ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# --- Frontend build files ---
+frontend/build/
+frontend/dist/
+
+# --- Backend build files ---
+backend/dist/
+backend/build/
+
+# --- Logs ---
+logs/
+*.log
+log.txt
+
+# --- System files ---
+.DS_Store
+Thumbs.db
+
+# --- VSCode / IDE settings ---
+.vscode/
+.idea/
+
+# --- Temporary files ---
+*.tmp
+*.swp
+
+# --- OS-specific files ---
+*.bak
+*.old
