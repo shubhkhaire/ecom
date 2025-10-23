@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
@@ -8,7 +9,7 @@ export default function HomePage() {
 
   useEffect(() => {
     // Fetch products from your backend
-    fetch("http://localhost:5000/api/products")
+    fetch(`${API_BASE_URL}/products`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
