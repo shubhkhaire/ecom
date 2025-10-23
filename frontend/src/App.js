@@ -10,6 +10,9 @@ import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProductDetails from "./components/ProductDetails";
 import EditProductPage from "./pages/EditProductPage";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -23,8 +26,11 @@ function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
           <Route path="/admin/product/:id/edit" element={<EditProductPage />} />
         </Routes>
+        <Footer />
       </CartProvider>
     </AuthProvider>
   );
