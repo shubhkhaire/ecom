@@ -26,9 +26,33 @@ const AdminPage = () => {
   }, [user, navigate]);
 
   const fetchProducts = async () => {
-    const res = await fetch(`${API_BASE_URL}/products`);
-    const data = await res.json();
-    setProducts(data);
+    try {
+      const res = await fetch(`${API_BASE_URL}/products`);
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          navigate("/auth");
+          return;
+        }
+        const txt = await res.text();
+        console.error("Failed to fetch products:", txt);
+        return;
+      }
+
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const data = await res.json();
+        setProducts(data);
+      } else {
+        const txt = await res.text();
+        console.error(
+          "Unexpected non-JSON response from products endpoint:",
+          txt
+        );
+      }
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -48,26 +72,57 @@ const AdminPage = () => {
       body: JSON.stringify(newProduct),
     });
 
-    if (res.ok) {
-      fetchProducts();
-      resetForm();
-    } else if (res.status === 401) {
-      navigate("/auth");
+    try {
+      if (res.ok) {
+        // Some APIs return the updated product JSON; others return empty body.
+        // We only need to refresh the list.
+        await fetchProducts();
+        resetForm();
+        return;
+      }
+
+      if (res.status === 401) {
+        navigate("/auth");
+        return;
+      }
+
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const err = await res.json();
+        console.error("Failed to save product:", err);
+      } else {
+        const txt = await res.text();
+        console.error("Failed to save product (non-json):", txt);
+      }
+    } catch (err) {
+      console.error("Error during product save:", err);
     }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      const res = await fetch(`${API_BASE_URL}/admin/products/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-      if (res.ok) {
-        fetchProducts();
-      } else if (res.status === 401) {
-        navigate("/auth");
+      try {
+        const res = await fetch(`${API_BASE_URL}/admin/products/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+
+        if (res.ok) {
+          fetchProducts();
+          return;
+        }
+
+        if (res.status === 401) {
+          navigate("/auth");
+          return;
+        }
+
+        const txt = await res.text();
+        console.error("Failed to delete product:", txt);
+      } catch (err) {
+        console.error("Error deleting product:", err);
       }
     }
   };
@@ -199,11 +254,13 @@ const AdminPage = () => {
               {products.map((product) => (
                 <tr key={product._id}>
                   <td>
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="admin-product-image"
-                    />
+                    <div className="admin-image-wrapper">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="admin-product-image"
+                      />
+                    </div>
                   </td>
                   <td>{product.name}</td>
                   <td>₹{product.price}</td>

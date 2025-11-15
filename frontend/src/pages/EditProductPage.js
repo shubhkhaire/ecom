@@ -139,13 +139,13 @@ const EditProductPage = () => {
           />
         </div>
         <div className="form-actions">
-          <button type="submit" className="btn-primary">
+          <button type="submit" className="btn btn--primary">
             Save Changes
           </button>
           <button
             type="button"
             onClick={() => navigate("/admin")}
-            className="btn-secondary"
+            className="btn btn--ghost"
           >
             Cancel
           </button>

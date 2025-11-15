@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
   const { cart } = useContext(CartContext);
@@ -15,7 +16,11 @@ export default function Header() {
           Mini E-Shop
         </Link>
         <div className="navbar__links">
-          <Link to="/" className="navbar__link">
+          <Link
+            to="/"
+            className="navbar__link"
+            onClick={() => window.dispatchEvent(new CustomEvent("refreshHome"))}
+          >
             Home
           </Link>
           <Link to="/about" className="navbar__link">
@@ -30,20 +35,18 @@ export default function Header() {
           {user ? (
             <>
               <span className="text-muted">Hello, {user.name}!</span>
-              <Link to="/admin" className="btn btn--ghost">
-                Admin
-              </Link>
-              <button onClick={logout} className="btn btn--ghost">
+              <button onClick={logout} className="btn btn--ghost btn-sm">
                 Logout
               </button>
             </>
           ) : (
-            <Link to="/auth" className="btn btn--ghost">
+            <Link to="/auth" className="btn btn--ghost btn-sm">
               Login / Sign up
             </Link>
           )}
-          <Link to="/cart" className="btn btn--primary">
-            Cart ({totalItems})
+          <ThemeToggle />
+          <Link to="/cart" className="btn btn--primary btn-sm">
+            🛒 Cart ({totalItems})
           </Link>
         </div>
       </div>

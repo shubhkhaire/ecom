@@ -47,6 +47,21 @@ export const CartProvider = ({ children }) => {
         }
         return [...prev, { ...product, qty: product.qty || 1 }];
       });
+      // Emit a lightweight toast event for UI notifications
+      try {
+        const name = product.name || "Product";
+        window.dispatchEvent(
+          new CustomEvent("toast", {
+            detail: {
+              message: `${name} added to cart`,
+              type: "success",
+              duration: 3000,
+            },
+          })
+        );
+      } catch (e) {
+        // ignore in non-browser environments
+      }
     });
   };
 
